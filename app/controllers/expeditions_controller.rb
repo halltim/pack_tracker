@@ -5,7 +5,9 @@ class ExpeditionsController < ApplicationController
 
   def index
     @user = current_user
-    @expeditions = @user.expeditions.order("title")
+    @user_expeditions = @user.expeditions.order("title")
+    @public_expeditions = Expedition.where(public: true).order("title")
+
   end
 
 
@@ -60,7 +62,7 @@ class ExpeditionsController < ApplicationController
   def join
     expedition = Expedition.find_by(id: params[:expedition_id])
     expedition.add_user(current_user)
-    redirect_to upcoming_expedition_path, notice: "You successfully joined #{expedition.title ? expedition.title.titleize : 'the expedition'}"
+    redirect_to expeditions_path, notice: "You successfully joined #{expedition.title ? expedition.title.titleize : 'the expedition'}"
   end
 
   def unjoin
@@ -94,6 +96,6 @@ class ExpeditionsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def expedition_params
-    params.require(:expedition).permit(:title, :days, :start_date)
+    params.require(:expedition).permit(:title, :days, :start_date, :public)
   end
 end
